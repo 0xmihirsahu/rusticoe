@@ -33,8 +33,14 @@ fn play_game() {
 
         game_board[row][col] = curr_player;
 
-        if let winner @ ('X' | 'O') = check_winner(&game_board) {
+        let winner = check_winner(&game_board);
+        if winner != ' ' {
             println!("Player {} wins!", winner);
+            break;
+        }
+
+        if check_draw(&game_board){
+            println!("Game Draw :|");
             break;
         }
 
@@ -47,6 +53,18 @@ fn play_game() {
     }
 }
 
+
+fn check_draw(board: &BOARD) -> bool {
+    for row in board{
+        for col in row{
+            if *col == ' ' {
+                return false;
+            }
+        }
+    }
+
+    true
+}
 fn get_inputs() -> (usize, usize) {
     let mut curr_input = String::new();
 
