@@ -38,9 +38,10 @@ fn play_game(){
             .read_line(&mut curr_input)
             .expect("Failed to read line.");
 
-        let moves: Vec<&str> = curr_input.split(',').collect();
-        let moves: Vec<usize> = moves.iter().filter_map(|x| x.parse().ok()).collect();
+        let moves: Vec<usize> = curr_input.trim().split(',')
+                                    .filter_map(|x| x.parse().ok()).collect();
         
+        curr_input.clear();
         game_board[moves[0]][moves[1]] = curr_player;
 
         match check_winner(&game_board){
@@ -48,70 +49,40 @@ fn play_game(){
                 print!("Player {} wins!", PLAYER_X);
                 break;
             },
+
             PLAYER_O => {
                 print!("Player {} wins!", PLAYER_O);
-            }
+                break;
+            },
 
             _ => {}
         }
-
     }
-    
     
 }
 
 fn check_winner(board: &BOARD) -> char{
-    match board{
-        [['X','X','X'],
-        [' ',' ',' '],
-        [' ',' ',' ']] => PLAYER_X,
-
-        [[' ',' ',' '],
-        ['X','X','X'],
-        [' ',' ',' ']] => PLAYER_X,
-
-        [[' ',' ',' '],
-        [' ',' ',' '],
-        ['X','X','X']] => PLAYER_X,
-
-        [['X',' ',' '],
-        [' ','X',' '],
-        [' ',' ','X']] => PLAYER_X,
-
-        [[' ',' ','X'],
-        [' ','X',' '],
-        ['X',' ',' ']] => PLAYER_X,
-
-        [[' ','X',' '],
-        [' ','X',' '],
-        [' ','X',' ']] => PLAYER_X,
-
-        [['O','O','O'],
-        [' ',' ',' '],
-        [' ',' ',' ']] => PLAYER_O,
-
-        [[' ',' ',' '],
-        ['O','O','O'],
-        [' ',' ',' ']] => PLAYER_O,
-
-        [[' ',' ',' '],
-        [' ',' ',' '],
-        ['O','O','O']] => PLAYER_O,
-
-        [['O',' ',' '],
-        [' ','O',' '],
-        [' ',' ','O']] => PLAYER_O,
-
-        [[' ',' ','O'],
-        [' ','O',' '],
-        ['O',' ',' ']] => PLAYER_O,
-
-        [[' ','O',' '],
-        [' ','O',' '],
-        [' ','O',' ']] => PLAYER_O,
-
-        _ => ' '
+    for row in 0..3{
+        if board[row][0] != ' ' && board[row][0] == board[row][1] && board[row][1] ==  board[row][2]{
+            return board[row][0];
+        }
     }
+
+    for col in 0..3{
+        if board[0][col] != ' ' && board[0][col] == board[1][col] && board[1][col] == board[2][col]{
+            return board[0][col];
+        }
+    }
+
+    if board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2]{
+        return board[0][0];
+    }
+
+    if board[0][2] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0]{
+        return board[0][2];
+    }
+
+    ' '
 }
 fn main() {
     println!("Welcome to rustactoe");
