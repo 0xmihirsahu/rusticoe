@@ -1,11 +1,11 @@
 use std::io;
-
+const BOARD_SIZE: usize = 3;
 const PLAYER_X: char = 'X';
 const PLAYER_O: char = 'O';
-type BOARD = [[char; 3]; 3];
+type BOARD = [[char; BOARD_SIZE]; BOARD_SIZE];
 
 fn intialize_board() -> BOARD {
-    return [[' '; 3]; 3];
+    return [[' '; BOARD_SIZE]; BOARD_SIZE];
 }
 
 fn print_board(board: &BOARD) {
@@ -20,7 +20,6 @@ fn print_board(board: &BOARD) {
 fn play_game() {
     let mut game_board = intialize_board();
     let mut curr_player = PLAYER_X;
-    let mut curr_input = String::from("");
 
     loop {
         println!("Current Board: ");
@@ -34,18 +33,8 @@ fn play_game() {
 
         println!("Player {} move (row, col): ", curr_player);
 
-        io::stdin()
-            .read_line(&mut curr_input)
-            .expect("Failed to read line.");
-
-        let moves: Vec<usize> = curr_input
-            .trim()
-            .split(',')
-            .filter_map(|x| x.parse().ok())
-            .collect();
-
-        curr_input.clear();
-        game_board[moves[0]][moves[1]] = curr_player;
+        let (row, col) = get_inputs();
+        game_board[row][col] = curr_player;
 
         match check_winner(&game_board) {
             PLAYER_X => {
@@ -63,6 +52,37 @@ fn play_game() {
     }
 }
 
+fn get_inputs() -> (usize, usize) {
+    let mut curr_input = String::from("");
+
+    loop {
+        io::stdin()
+            .read_line(&mut curr_input)
+            .expect("Failed to read line.");
+
+        let moves: Vec<usize> = curr_input
+            .trim()
+            .split(',')
+            .filter_map(|x| x.parse().ok())
+            .collect();
+
+        curr_input.clear();
+
+        if moves.len() == 2 {
+            let (row, col) = (moves[0], moves[1]);
+            if row < BOARD_SIZE && col < BOARD_SIZE {
+                return (moves[0], moves[1]);
+            } else {
+                println!(
+                    "You are thinking out of the box lol, Board is of size {}",
+                    BOARD_SIZE
+                );
+            }
+        } else {
+            println!("Invalid input!");
+        }
+    }
+}
 fn check_winner(board: &BOARD) -> char {
     for row in 0..3 {
         if board[row][0] != ' ' && board[row][0] == board[row][1] && board[row][1] == board[row][2]
