@@ -10,7 +10,7 @@ fn initialize_board() -> BOARD {
 
 fn print_board(board: &BOARD) {
     for row in board {
-        println!("{}", row.iter().map(|&c| c.to_string()).collect::<Vec<_>>().join(" | "));
+        println!("{}", row.iter().map(|&c| c.to_string()).collect::<Vec<String>>().join(" | "));
     }
     println!();
 }
@@ -20,8 +20,7 @@ fn play_game() {
     let mut curr_player = PLAYER_X;
 
     loop {
-        println!("Current Board: ");
-        print_board(&game_board);
+        
 
         println!("Player {} move (row, col): ", curr_player);
         let (row, col) = get_inputs();
@@ -32,6 +31,9 @@ fn play_game() {
         }
 
         game_board[row][col] = curr_player;
+
+        println!("Current Board: ");
+        print_board(&game_board);
 
         let winner = check_winner(&game_board);
         if winner != ' ' {
